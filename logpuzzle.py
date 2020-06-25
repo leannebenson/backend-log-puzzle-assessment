@@ -68,7 +68,7 @@ def main(args):
         download_images(img_urls, parsed_args.todir)
     else:
         print('\n'.join(img_urls))
-
+    
 
 if __name__ == '__main__':
     main(sys.argv[1:])
