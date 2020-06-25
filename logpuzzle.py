@@ -27,6 +27,44 @@ def read_urls(filename):
     alphabetically in increasing order, and screening out duplicates.
     """
     # +++your code here+++
+    with open(filename, 'r') as f:
+        f_file = f.read()
+        server_search = re.search(r'_(.+)', filename)
+        server = server_search.group()
+
+        puzzle = re.compile(r'GET\s(.+)\sHTTP') # maybe according to read me change s to UpperS
+        pieces = puzzle.finditer(f_file)
+
+        link_dict = {}
+        link_list = []
+    
+        for piece in pieces:
+            expression = piece.group(1)
+            if "puzzle" in expression:
+                link_dict[expression] = "yes"
+
+        xfer_protocol = "http://"
+
+        for path in link_dict:
+            link_list.append(xfer_protocol + server[1:] + path)
+
+        list_to_string = " ".join(link_list)
+
+        def sortList(a):
+            sum = re.search(r'puzzle/p-\w+-(\w+)', a).group(1)
+            return sum
+
+        if re.search(r'puzzle/(\w+-\w+-\w+)', list_to_string):
+            print("this is PLACE_CODE.GOOGLE.COM")
+            link_list.sort(key=sortList)
+
+        else:
+            print("this is ANIMAL_CODE.GOOGLE.COM")
+            link_list.sort()
+
+        return link_list
+        
+              
     pass
 
 
