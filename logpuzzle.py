@@ -69,6 +69,22 @@ def read_urls(filename):
 
 
 def download_images(img_urls, dest_dir):
+    counter = 0
+    dir_path = []
+    img_list = ""
+
+    if dest_dir.startswith("/"):
+        dest_dir = dest_dir[1:]
+
+    dest_path = os.path.abspath(dest_dir)
+
+    try:
+        os.makedirs(dest_path)
+    except OSError:
+        print("Directory /{} may exist already\n".format(dest_dir))
+
+
+        
 
     pass
 
