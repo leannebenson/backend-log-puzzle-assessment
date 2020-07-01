@@ -83,10 +83,29 @@ def download_images(img_urls, dest_dir):
     except OSError:
         print("Directory /{} may exist already\n".format(dest_dir))
 
+    for img_url in img_urls:
+
+        file_name = "img{}".format(counter)
+        print("Now retrieving {}...".format(file_name))
+
+        direct_path = dest_path + "/" + file_name
+        dir_path.append(direct_path)
+
+        local_file, _ = img_url.request.urlrequest(img_url, direct_path)
+        file_search = re.search(r'assessment(.+)', local_file)
+
+
+        local_file = file_search.group()
+        local_file = local_file[10:]
+        print(local_file)
+
+        img_element = '<img src="' + local_file + '"/>'
+        img_list = img_list + img_element
+
+        counter += 1
 
         
-
-    pass
+    #pass
 
 
 def create_parser():
