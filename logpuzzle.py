@@ -104,7 +104,21 @@ def download_images(img_urls, dest_dir):
 
         counter += 1
 
-        
+        html_string = """
+        <html>
+            <body>
+                <p>So it Begins...</p>
+                <script>
+                    document.write('{}')
+                </script>
+            </body>
+        </html>
+        """.format(img_list)
+
+        html_file = dest_path + "/index.html"
+
+        with open(html_file, "w") as wf:
+            wf.write(html_string)
     #pass
 
 
