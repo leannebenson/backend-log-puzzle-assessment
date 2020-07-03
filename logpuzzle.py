@@ -17,7 +17,8 @@ rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
 import os
 import re
 import sys
-import urllib.request
+if sys.version_info[0] >= 3:
+    from urllib.request import urlretrieve
 import argparse
 
 
@@ -69,57 +70,19 @@ def read_urls(filename):
 
 
 def download_images(img_urls, dest_dir):
-    counter = 0
-    dir_path = []
-    img_list = ""
-
-    if dest_dir.startswith("/"):
-        dest_dir = dest_dir[1:]
-
-    dest_path = os.path.abspath(dest_dir)
-
-    try:
-        os.makedirs(dest_path)
-    except OSError:
-        print("Directory /{} may exist already\n".format(dest_dir))
-
-    for img_url in img_urls:
-
-        file_name = "img{}".format(counter)
-        print("Now retrieving {}...".format(file_name))
-
-        direct_path = dest_path + "/" + file_name
-        dir_path.append(direct_path)
-
-        local_file, _ = img_url.request.urlrequest(img_url, direct_path)
-        file_search = re.search(r'assessment(.+)', local_file)
-
-
-        local_file = file_search.group()
-        local_file = local_file[10:]
-        print(local_file)
-
-        img_element = '<img src="' + local_file + '"/>'
-        img_list = img_list + img_element
-
-        counter += 1
-
-        html_string = """
-        <html>
-            <body>
-                <p>So it Begins...</p>
-                <script>
-                    document.write('{}')
-                </script>
-            </body>
-        </html>
-        """.format(img_list)
-
-        html_file = dest_path + "/index.html"
-
-        with open(html_file, "w") as wf:
-            wf.write(html_string)
-    #pass
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
+        print('dir made')
+    index_html = '<html><body>'
+    for index, url in enumerate(img_urls):
+        image_name = 'img' + str(index)
+        print('Retrieving {}'.format(url))
+        urlretrieve(url, dest_dir + "/" + image_name)
+        index_html += '<img src={}></img>'.format(image_name)
+    index_html += '</body></html>'
+    
+    with open(dest_dir + '/index.html', 'w') as w_index:
+            w_index.write(index_html)
 
 
 def create_parser():
