@@ -41,7 +41,8 @@ The `download_images()` function should also create an `index.html` file in the 
 Of course your index file won't actually use the `/edu/python/exercises/` src path for images; it will use the directory path specified in the `--todir` command line option. Here's what it should look like once you can download the animal puzzle.
 
 ```
-% python logpuzzle.py --todir animaldir animal_code.google.com
+% ls
+
 % ls animaldir
 img0  img1  img2  img3  img4  img5  img6  img7  img8  img9  index.html
 ```

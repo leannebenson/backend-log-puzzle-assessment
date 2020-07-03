@@ -85,6 +85,9 @@ def download_images(img_urls, dest_dir):
             w_index.write(index_html)
 
 
+def return_last_word(url):
+    return re.findall(r'-(....).jpg', url)
+
 def create_parser():
     """Creates an argument parser object."""
     parser = argparse.ArgumentParser()
