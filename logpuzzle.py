@@ -17,7 +17,8 @@ rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
 import os
 import re
 import sys
-import urllib.request
+if sys.version_info[0] >= 3:
+    from urllib.request import urlretrieve
 import argparse
 
 
@@ -27,19 +28,61 @@ def read_urls(filename):
     alphabetically in increasing order, and screening out duplicates.
     """
     # +++your code here+++
+    with open(filename, 'r') as f:
+        f_file = f.read()
+        server_search = re.search(r'_(.+)', filename)
+        server = server_search.group()
+
+        puzzle = re.compile(r'GET\s(.+)\sHTTP') # maybe according to read me change s to UpperS
+        pieces = puzzle.finditer(f_file)
+
+        link_dict = {}
+        link_list = []
+    
+        for piece in pieces:
+            expression = piece.group(1)
+            if "puzzle" in expression:
+                link_dict[expression] = "yes"
+
+        xfer_protocol = "http://"
+
+        for path in link_dict:
+            link_list.append(xfer_protocol + server[1:] + path)
+
+        list_to_string = " ".join(link_list)
+
+        def sortList(a):
+            sum = re.search(r'puzzle/p-\w+-(\w+)', a).group(1)
+            return sum
+
+        if re.search(r'puzzle/(\w+-\w+-\w+)', list_to_string):
+            print("this is PLACE_CODE.GOOGLE.COM")
+            link_list.sort(key=sortList)
+
+        else:
+            print("this is ANIMAL_CODE.GOOGLE.COM")
+            link_list.sort()
+
+        return link_list
+        
+              
     pass
 
 
 def download_images(img_urls, dest_dir):
-    """Given the URLs already in the correct order, downloads
-    each image into the given directory.
-    Gives the images local filenames img0, img1, and so on.
-    Creates an index.html in the directory with an <img> tag
-    to show each local image file.
-    Creates the directory if necessary.
-    """
-    # +++your code here+++
-    pass
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
+        print('dir made')
+    index_html = '<html><body>'
+    for index, url in enumerate(img_urls):
+        image_name = 'img' + str(index)
+        print('Retrieving {}'.format(url))
+        urlretrieve(url, dest_dir + "/" + image_name)
+        index_html += '<img src={}></img>'.format(image_name)
+    index_html += '</body></html>'
+    
+    with open(dest_dir + '/index.html', 'w') as w_index:
+            w_index.write(index_html)
 
 
 def create_parser():
@@ -68,7 +111,7 @@ def main(args):
         download_images(img_urls, parsed_args.todir)
     else:
         print('\n'.join(img_urls))
-
+    
 
 if __name__ == '__main__':
     main(sys.argv[1:])
